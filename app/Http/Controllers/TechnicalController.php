@@ -99,12 +99,13 @@ class TechnicalController extends Controller
     public function index(Request $request)
     {
         try {
-            $technicals = Techinical::where('active', true);
-            if ($request->user()->tokenCan('CapturistaFichas')) {
-            $technicals =  $technicals->where("userId",Auth::id());
-            
-            }
-        $technicals = $technicals->get();
+           $query = Techinical::where('active', true);
+
+if ($request->user()->tokenCan('CapturistaFichas')) {
+    $query->where("userId", Auth::id());
+}
+
+$technicals = $query->orderByDesc('id')->get();
             return ApiResponse::success($technicals, 'Fichas técnicas recuperadas con éxito');
         } catch (Exception $e) {
             Log::error('Error al recuperar fichas técnicas: ' . $e->getMessage());
